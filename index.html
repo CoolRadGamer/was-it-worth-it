@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>was it worth it?</title>
+    <script src="ExpantaNum.js"></script>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <audio id="bgMusic" src="music.mp3" loop preload="auto"></audio>
+
+    <div id="cutscene" class="cutscene hidden">
+      <div class="cutscene-card">
+        <p id="cutsceneChapter" class="cutscene-label">Opening scene</p>
+        <h2 id="cutsceneTitle">was it worth it?</h2>
+        <div id="dialogueText" class="dialogue" aria-live="polite"></div>
+        <div class="cutscene-actions">
+          <button id="skipIntroButton" class="secondary">Skip</button>
+          <button id="startButton" class="start-button">Continue</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="game-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">idk wtf this is</p>
+          <h1>was it worth it?</h1>
+        </div>
+        <nav class="tabs" aria-label="Main tabs">
+          <button class="tab-button active" data-tab="gameTab">Game</button>
+          <button class="tab-button" data-tab="optionsTab">Options</button>
+          <button class="tab-button" data-tab="blogTab">Blog</button>
+        </nav>
+      </header>
+
+      <div id="gameTab" class="tab-panel active">
+        <main class="layout">
+          <section class="panel main-panel">
+            <div class="stat-row">
+              <div class="stat-box primary">
+                <span class="label currency-label">points</span>
+                <strong id="slopCount">10</strong>
+                <div class="per-second">(<span id="autoRate">0</span> / sec)</div>
+              </div>
+            </div>
+          </section>
+
+          <aside class="panel shop-panel">
+            <h2>Upgrade</h2>
+            <div id="upgradeList" class="upgrade-list"></div>
+          </aside>
+        </main>
+      </div>
+
+      <div id="blogTab" class="tab-panel hidden">
+        <section class="panel blog-panel">
+          <h2>Blog</h2>
+          <div id="blogList" class="blog-list"></div>
+        </section>
+      </div>
+
+      <div id="optionsTab" class="tab-panel hidden">
+        <section class="panel options-panel">
+          <div class="settings">
+            <label for="autosaveSlider">Autosave interval</label>
+            <div class="slider-row">
+              <input id="autosaveSlider" type="range" min="5" max="60" step="5" value="15" />
+              <span id="autosaveValue">15s</span>
+            </div>
+          </div>
+
+          <div class="option-actions">
+            <button id="saveButton" class="secondary">Save</button>
+            <button id="exportButton" class="secondary">Export</button>
+            <button id="importButton" class="secondary">Import</button>
+            <button id="replayIntroButton" class="secondary">Replay intro</button>
+            <button id="resetButton" class="secondary">Reset</button>
+          </div>
+
+          <div class="currency-setting">
+            <label for="currencyInput">Rename currency</label>
+            <div id="currencyLocked" class="locked-box">locked (omegalul)</div>
+            <input id="currencyInput" type="text" value="points" maxlength="2000" />
+          </div>
+
+          <div class="color-setting">
+            <label for="backgroundColorInput">Background color</label>
+            <div id="backgroundColorLocked" class="locked-box">locked (omegalul)</div>
+            <input id="backgroundColorInput" type="color" value="#f3efe9" />
+          </div>
+
+          <div class="music-setting">
+            <label for="musicVolumeSlider">Music volume</label>
+            <div class="slider-row">
+              <input id="musicVolumeSlider" type="range" min="0" max="100" step="1" value="40" />
+              <span id="musicVolumeValue">40%</span>
+            </div>
+            <button id="toggleMusicButton" class="secondary">Play music</button>
+          </div>
+
+          <div class="credits-box">
+            <h3>Credits</h3>
+            <p>Made by me, myself and AI.</p>
+            <p>Music: jazz mc workson - CRG (that's me!) (not made by ai ew thats disgusting)</p>
+            <p>i have no idea why i made this slop i just wanted to see why people do this kind of thing</p>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <script src="game.js"></script>
+  </body>
+</html>
