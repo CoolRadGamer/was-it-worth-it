@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <!-- Page metadata and script loading. ExpantaNum.js is needed for big-number math. -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>was it worth it?</title>
@@ -10,6 +11,14 @@
   <body>
     <audio id="bgMusic" src="music.mp3" loop preload="auto"></audio>
 
+    <!-- News ticker bar at the top of the screen. -->
+    <div id="ticker" class="ticker">
+      <div id="tickerViewport" class="ticker-viewport">
+        <span id="tickerMessage" class="ticker-message"></span>
+      </div>
+    </div>
+
+    <!-- Intro overlay that plays before the game begins. -->
     <div id="cutscene" class="cutscene hidden">
       <div class="cutscene-card">
         <p id="cutsceneChapter" class="cutscene-label">Opening scene</p>
@@ -30,12 +39,20 @@
         </div>
         <nav class="tabs" aria-label="Main tabs">
           <button class="tab-button active" data-tab="gameTab">Game</button>
+          <button class="tab-button" data-tab="statsTab">Stats</button>
           <button class="tab-button" data-tab="optionsTab">Options</button>
           <button class="tab-button" data-tab="blogTab">Blog</button>
         </nav>
       </header>
 
+      <!-- Main gameplay tab showing the HUD and the upgrade shop. -->
       <div id="gameTab" class="tab-panel active">
+        <nav class="subtab-nav" aria-label="Game subtabs">
+          <button class="subtab-button active" data-subtab="gameSub">Game</button>
+          <button id="prestigeSubtabButton" class="subtab-button" data-subtab="prestigeSub">Prestige</button>
+        </nav>
+
+        <div id="gameSub" class="subtab-panel active">
         <main class="layout">
           <section class="panel main-panel">
             <div class="stat-row">
@@ -45,6 +62,45 @@
                 <div class="per-second">(<span id="autoRate">0</span> / sec)</div>
               </div>
             </div>
+
+            <!-- Prestige button: shows once you're ready to reset. -->
+            <div id="prestigeButtonWrap" class="prestige-button-wrap hidden">
+              <button id="prestigeButton" class="prestige-button">Prestige</button>
+            </div>
+
+            <!-- Minigames: a round of Lights Out banks a few seconds of production. Unlocks with the first upgrade. -->
+            <div id="minigamesPanel" class="minigames-panel hidden">
+              <h2>the boredom corner</h2>
+              <p class="minigame-blurb">something to do so you're not just waiting for <span class="currency-label">points</span> to increase</p>
+              <div class="minigame-setup">
+                <span class="minigame-size-label">Grid size</span>
+                <div class="minigame-size-buttons">
+                  <button class="size-button active" data-size="3">3×3 <small>+10s</small></button>
+                  <button class="size-button" data-size="5">5×5 <small>+20s</small></button>
+                  <button class="size-button" data-size="7">7×7 <small>+30s</small></button>
+                </div>
+              </div>
+              <div id="lightsBoard" class="lights-board" data-size="3"></div>
+              <div class="minigame-status">
+                <span id="lightsMoves">Moves: 0</span>
+                <button id="lightsReset" class="secondary">New board</button>
+                <button id="lightsStuck" class="secondary">Stuck?</button>
+              </div>
+              <p id="lightsMessage" class="minigame-message" aria-live="polite"></p>
+              <p class="minigame-hint">Tap a light to flip it and its neighbours. Turn them all off to win.</p>
+            </div>
+
+            <!-- Lights Out help dialog (placeholder content). -->
+            <div id="lightsDialog" class="dialog-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="lightsDialogTitle">
+              <div class="dialog">
+                <span class="dialog-label">stuck?</span>
+                <h3 id="lightsDialogTitle">skill issue omegalul</h3>
+                <p>Here's a strategy:<br>1. if there's a light in the top row click the cell below it<br>2. do this until there's no lights in the top row<br>3. repeat for the next rows down<br>4. once you're done with the bottom row just click on some lights in the top row and start again (I forgot which ones I'm not just gonna give you all the answers)</p>
+                <div class="dialog-actions">
+                  <button id="lightsDialogClose" class="secondary">Close</button>
+                </div>
+              </div>
+            </div>
           </section>
 
           <aside class="panel shop-panel">
@@ -52,8 +108,15 @@
             <div id="upgradeList" class="upgrade-list"></div>
           </aside>
         </main>
+        </div>
+
+        <section id="prestigeSub" class="subtab-panel prestige-panel hidden">
+          <h2>Prestige</h2>
+          <p>omegalul this isnt implemented yet</p>
+        </section>
       </div>
 
+      <!-- Blog tab containing the placeholder article entries. -->
       <div id="blogTab" class="tab-panel hidden">
         <section class="panel blog-panel">
           <h2>Blog</h2>
@@ -61,6 +124,25 @@
         </section>
       </div>
 
+      <!-- Stats tab showing lifetime earnings and a silly water-boiling fact. -->
+      <div id="statsTab" class="tab-panel hidden">
+        <section class="panel stats-panel">
+          <h2>Statistics</h2>
+          <div class="stats-list">
+            <div class="stat-box">
+              <span class="label" id="currentPointsLabel">Current points</span>
+              <strong id="currentPointsStat">0</strong>
+            </div>
+            <div class="stat-box">
+              <span class="label">Total currency made</span>
+              <strong id="totalMadeStat">0</strong>
+            </div>
+            <p id="waterFact" class="fun-fact"></p>
+          </div>
+        </section>
+      </div>
+
+      <!-- Options tab for save, autosave, notation, music, and cosmetic unlocks. -->
       <div id="optionsTab" class="tab-panel hidden">
         <section class="panel options-panel">
           <div class="settings">
@@ -68,6 +150,22 @@
             <div class="slider-row">
               <input id="autosaveSlider" type="range" min="5" max="60" step="5" value="15" />
               <span id="autosaveValue">15s</span>
+            </div>
+          </div>
+
+          <div class="settings notation-setting">
+            <label for="notationSelect">Number notation</label>
+            <select id="notationSelect">
+              <option value="standard">Standard (k, M, B)</option>
+              <option value="scientific">Scientific (1.23e6)</option>
+            </select>
+          </div>
+
+          <div class="settings ticker-setting">
+            <label for="tickerSpeedSlider">Ticker speed</label>
+            <div class="slider-row">
+              <input id="tickerSpeedSlider" type="range" min="10" max="200" step="5" value="60" />
+              <span id="tickerSpeedValue">60 px/s</span>
             </div>
           </div>
 
@@ -103,8 +201,12 @@
           <div class="credits-box">
             <h3>Credits</h3>
             <p>Made by me, myself and AI.</p>
+            <p>Writing by me (unless otherwise stated)</p>
+            <p>Upgrade names came up with by AI (you can tell because they're sooooo good)</p>
             <p>Music: jazz mc workson - CRG (that's me!) (not made by ai ew thats disgusting)</p>
             <p>i have no idea why i made this slop i just wanted to see why people do this kind of thing</p>
+            <p>Models: <br>The first half: MAI-Code-1.1-Flash <br>The second half: big-pickle</p>
+            <p>Number library: <a href="https://naruyoko.github.io/ExpantaNum.js/index.html" target="_blank">ExpantaNum</a> by Naruyoko</p>
           </div>
         </section>
       </div>

@@ -1,5 +1,11 @@
+/*
+  Global design tokens and base styling.
+  This file controls the minimalist layout, the spacing, the shop styling,
+  the tooltip appearance, and the intro scene treatment.
+*/
+
 :root {
-  --bg: #f3efe9;
+  --bg: #d8d8d8ad;
   --ink: #181512;
   --muted: #5f564e;
   --line: rgba(24, 21, 18, 0.2);
@@ -22,7 +28,8 @@ body {
 }
 
 button,
-input {
+input,
+select {
   font: inherit;
 }
 
@@ -33,7 +40,7 @@ button {
 .game-shell {
   max-width: 880px;
   margin: 0 auto;
-  padding: 40px 20px 60px;
+  padding: 76px 20px 60px;
 }
 
 .topbar {
@@ -42,6 +49,44 @@ button {
   align-items: flex-start;
   gap: 20px;
   margin-bottom: 28px;
+}
+
+/* News ticker pinned to the top of the screen, scrolling one message at a time. */
+.ticker {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 36px;
+  z-index: 5;
+  background: #ffffff;
+  color: #000000;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+}
+
+.ticker-viewport {
+  flex: 1;
+  overflow: hidden;
+  white-space: nowrap;
+  position: relative;
+  height: 100%;
+}
+
+.ticker-message {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  font-size: 0.78rem;
+  letter-spacing: 0.03em;
+  padding: 0 12px;
+  will-change: transform;
 }
 
 .tabs {
@@ -87,14 +132,16 @@ h1 {
 
 .layout {
   display: grid;
-  grid-template-columns: 1.3fr 0.7fr;
+  grid-template-columns: minmax(220px, 1.1fr) minmax(0, 1.9fr);
   gap: 28px;
+  align-items: start;
 }
 
 .panel {
   background: var(--panel);
   padding: 0;
   border: none;
+  min-width: 0;
 }
 
 .main-panel,
@@ -145,7 +192,265 @@ h1 {
   color: var(--muted);
   font-size: 0.94rem;
   letter-spacing: 0.04em;
-  text-transform: lowercase;
+}
+
+/* Lights Out minigame under the point counter. */
+.minigames-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border-top: 1px solid var(--line);
+  padding-top: 18px;
+}
+
+.minigames-panel h2 {
+  margin-bottom: 0;
+  font-size: 1.1rem;
+  letter-spacing: -0.02em;
+}
+
+.minigame-blurb {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.minigame-setup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.minigame-size-label {
+  color: var(--muted);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.minigame-size-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.size-button {
+  border: 1px solid var(--ink);
+  background: transparent;
+  color: var(--ink);
+  padding: 6px 10px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  transition: opacity 0.12s ease, transform 0.12s ease;
+}
+
+.size-button small {
+  color: var(--muted);
+  font-size: 0.7rem;
+}
+
+.size-button:hover {
+  transform: translateY(-1px);
+}
+
+.size-button.active {
+  background: var(--ink);
+  color: var(--bg);
+}
+
+.size-button.active small {
+  color: inherit;
+  opacity: 0.85;
+}
+
+.lights-board {
+  display: grid;
+  gap: 6px;
+  width: 100%;
+  max-width: 320px;
+}
+
+.lights-board[data-size="3"] {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.lights-board[data-size="5"] {
+  grid-template-columns: repeat(5, 1fr);
+}
+
+.lights-board[data-size="7"] {
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.lights-cell {
+  width: 100%;
+  aspect-ratio: 1;
+  border: 1px solid var(--ink);
+  border-radius: 6px;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  transition: background 0.12s ease, box-shadow 0.12s ease;
+}
+
+.lights-cell.on {
+  background: var(--ink);
+  box-shadow: 0 0 0 1px var(--ink), 0 0 14px rgba(0, 0, 0, 0.35);
+}
+
+.minigame-status {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.minigame-status .secondary {
+  padding: 5px 10px;
+  font-size: 0.78rem;
+}
+
+.minigame-message {
+  margin: 0;
+  font-weight: 600;
+  color: var(--ink);
+  min-height: 1.2em;
+}
+
+.minigame-hint {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+/* Sub-tabs inside the Game tab. */
+.subtab-nav {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 8px;
+}
+
+.subtab-button {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.85rem;
+  padding: 6px 14px;
+  cursor: pointer;
+}
+
+.subtab-button.active {
+  background: var(--ink);
+  color: var(--bg);
+  border-color: var(--ink);
+}
+
+.subtab-button:hover:not(.active) {
+  border-color: var(--line);
+  color: var(--ink);
+}
+
+.subtab-panel.hidden {
+  display: none;
+}
+
+/* Prestige panel: dark blue scheme. */
+.prestige-panel {
+  background: #0a1628;
+  color: #bfd9ff;
+  border: 1px solid #1e3a5f;
+  padding: 26px 20px 24px;
+  min-width: 0;
+}
+
+.prestige-panel h2 {
+  margin: 0 0 10px;
+  color: #7fb2ff;
+  letter-spacing: -0.03em;
+}
+
+.prestige-panel p {
+  margin: 0;
+  color: #9fc3ff;
+  opacity: 0.85;
+}
+
+/* Prestige button between the point counter and the minigames. */
+.prestige-button-wrap {
+  margin-top: 2px;
+}
+
+.prestige-button {
+  width: 100%;
+  padding: 12px 16px;
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #bfd9ff;
+  background: #0a1628;
+  border: 1px solid #1e3a5f;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.prestige-button:hover {
+  background: #10213c;
+  border-color: #2a4d7a;
+  box-shadow: 0 0 0 1px rgba(127, 178, 255, 0.4);
+}
+
+/* Lights Out help dialog. */
+.dialog-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(17, 14, 12, 0.55);
+  z-index: 20;
+}
+
+.dialog {
+  width: min(420px, calc(100vw - 24px));
+  background: var(--bg);
+  border: 1px solid var(--line);
+  padding: 22px 20px 18px;
+  color: var(--ink);
+}
+
+.dialog-label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--muted);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.dialog h3 {
+  margin: 0 0 12px;
+  font-size: 1.3rem;
+  letter-spacing: -0.03em;
+}
+
+.dialog p {
+  margin: 0 0 18px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.dialog-actions .secondary {
+  padding: 6px 14px;
 }
 
 .settings {
@@ -160,6 +465,14 @@ h1 {
   text-transform: uppercase;
   letter-spacing: 0.08em;
   font-size: 0.72rem;
+}
+
+.notation-setting select {
+  width: min(300px, 100%);
+  border: 1px solid var(--ink);
+  background: transparent;
+  color: var(--ink);
+  padding: 10px 12px;
 }
 
 .slider-row {
@@ -202,24 +515,122 @@ input[type="range"] {
   line-height: 1.6;
 }
 
-.upgrade-list {
+/* Statistics tab: lifetime earnings and the fun fact. */
+.stats-panel {
   display: flex;
   flex-direction: column;
-  gap: 0;
-  border-top: 1px solid var(--line);
+  gap: 20px;
 }
 
-.upgrade-item {
+.stats-list {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 16px;
-  padding: 16px 0;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.stats-list .stat-box {
   border-bottom: 1px solid var(--line);
 }
 
+.stats-list .stat-box strong {
+  font-size: clamp(1.4rem, 2.6vw, 2rem);
+  letter-spacing: -0.04em;
+}
+
+.fun-fact {
+  margin: 0;
+  padding: 16px;
+  border: 1px dashed var(--line);
+  background: rgba(0, 0, 0, 0.02);
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+/* Upgrade columns and vertical scrolling sections for the shop. */
+.upgrade-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(220px, 1fr));
+  gap: 18px;
+  align-items: start;
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
+}
+
+.upgrade-section {
+  padding-top: 6px;
+  min-width: 0;
+}
+
+/* Column heading sits OUTSIDE the scrollable list so items can never slide over it. */
+.upgrade-section-head h3 {
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* The scrollable upgrade list for a single column. */
+.upgrade-items {
+  max-height: 420px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 6px;
+}
+
+.upgrade-item {
+  position: relative;
+  z-index: 0;
+  isolation: isolate;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--line);
+  overflow: visible;
+}
+
 .upgrade-copy {
-  flex: 1;
+  flex: 1 1 150px;
+  min-width: 0;
+}
+
+/* Floating tooltip styling. It is positioned fixed and layered above the rest of the page. */
+.upgrade-tooltip {
+  position: fixed;
+  z-index: 2147483647;
+  width: min(270px, 70vw);
+  padding: 10px 12px;
+  background: #000000;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.22);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.14s ease, transform 0.14s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
+.upgrade-tooltip *,
+.upgrade-tooltip strong,
+.upgrade-tooltip span {
+  color: #ffffff !important;
+}
+
+.upgrade-tooltip strong {
+  display: none;
+}
+
+.upgrade-tooltip.visible {
+  opacity: 1;
+  visibility: visible;
 }
 
 .upgrade-copy h3 {
@@ -233,26 +644,51 @@ input[type="range"] {
   font-size: 0.82rem;
 }
 
+.upgrade-current-effect {
+  margin-top: 6px;
+  color: var(--ink);
+  font-size: 0.76rem;
+  letter-spacing: 0.02em;
+}
+
+.upgrade-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
 .buy-button,
+.buy-max-button,
 .secondary,
 .start-button {
   border: 1px solid var(--ink);
   background: transparent;
   color: var(--ink);
   padding: 8px 12px;
+  white-space: nowrap;
+  flex-shrink: 0;
   transition: opacity 0.12s ease, transform 0.12s ease;
 }
 
 .buy-button:hover,
+.buy-max-button:hover,
 .secondary:hover,
 .start-button:hover {
   transform: translateY(-1px);
 }
 
-.buy-button:disabled {
+.buy-button:disabled,
+.buy-max-button:disabled {
   opacity: 0.4;
   cursor: not-allowed;
   transform: none;
+}
+
+.buy-max-button {
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
 }
 
 .option-actions {
@@ -291,6 +727,11 @@ input[type="range"] {
   color: var(--ink);
   padding: 10px 12px;
   width: min(240px, 100%);
+}
+
+.currency-setting input::placeholder {
+  color: var(--muted);
+  opacity: 0.7;
 }
 
 .locked-box {
@@ -335,6 +776,7 @@ input[type="range"] {
   line-height: 1.6;
 }
 
+/* Opening cutscene overlay and dialogue card styling. */
 .cutscene {
   position: fixed;
   inset: 0;
@@ -351,7 +793,7 @@ input[type="range"] {
 
 .cutscene-card {
   width: min(560px, calc(100vw - 24px));
-  background: #f7f2eb;
+  background: var(--bg);
   border: 1px solid var(--line);
   padding: 26px 20px 18px;
   color: var(--ink);
