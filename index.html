@@ -6,6 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>was it worth it?</title>
     <script src="ExpantaNum.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
@@ -23,7 +26,7 @@
       <div class="cutscene-card">
         <p id="cutsceneChapter" class="cutscene-label">Opening scene</p>
         <h2 id="cutsceneTitle">was it worth it?</h2>
-        <div id="dialogueText" class="dialogue" aria-live="polite"></div>
+        <div id="dialogueText" class="dialogue" aria-live="off"></div>
         <div class="cutscene-actions">
           <button id="skipIntroButton" class="secondary">Skip</button>
           <button id="startButton" class="start-button">Continue</button>
@@ -31,10 +34,41 @@
       </div>
     </div>
 
+    <!-- Ending fade-to-black transition. -->
+    <div id="endingFade" class="ending-fade hidden">
+      <p id="endingFadeText" class="ending-fade-text"></p>
+      <p id="endingFadeHint" class="ending-fade-hint">click to continue</p>
+    </div>
+
+    <!-- Win screen shown after the good ending. -->
+    <div id="winScreen" class="ending-screen plain hidden" role="dialog" aria-modal="true">
+      <div class="ending-screen-card">
+        <p class="ending-screen-label">good ending</p>
+        <h2>YOU WIN</h2>
+        <p class="ending-screen-text">The machine is satisfied. The noise is gone. It was worth it.</p>
+        <div class="ending-screen-actions">
+          <button id="winPlayAgain" class="start-button">Play again</button>
+          <button id="winGoBack" class="secondary">Go back</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bad ending screen. -->
+    <div id="badEndingScreen" class="ending-screen hidden" role="dialog" aria-modal="true">
+      <div class="ending-screen-card">
+        <p class="ending-screen-label">bad ending</p>
+        <h2>THE END</h2>
+        <p class="ending-screen-text">The machine consumed everything. It wasn't worth it.</p>
+        <div class="ending-screen-actions">
+          <button id="badGoBack" class="secondary">Go back</button>
+        </div>
+      </div>
+    </div>
+
     <div class="game-shell">
       <header class="topbar">
         <div>
-          <p class="eyebrow">idk wtf this is</p>
+          <p class="eyebrow" id="eyebrowText">idk wtf this is</p>
           <h1>was it worth it?</h1>
         </div>
         <nav class="tabs" aria-label="Main tabs">
@@ -44,28 +78,37 @@
           <button class="tab-button" data-tab="blogTab">Blog</button>
         </nav>
       </header>
+      <div id="gameStatus" class="game-status" aria-live="polite"></div>
 
       <!-- Main gameplay tab showing the HUD and the upgrade shop. -->
       <div id="gameTab" class="tab-panel active">
         <nav class="subtab-nav" aria-label="Game subtabs">
-          <button class="subtab-button active" data-subtab="gameSub">Game</button>
+          <button class="subtab-button active" data-subtab="gameSub">Main</button>
           <button id="prestigeSubtabButton" class="subtab-button" data-subtab="prestigeSub">Prestige</button>
+          <button id="chaosSubtabButton" class="subtab-button hidden" data-subtab="chaosSub">total chaos</button>
         </nav>
 
         <div id="gameSub" class="subtab-panel active">
         <main class="layout">
           <section class="panel main-panel">
             <div class="stat-row">
-              <div class="stat-box primary">
+              <div class="stat-box">
                 <span class="label currency-label">points</span>
                 <strong id="slopCount">10</strong>
                 <div class="per-second">(<span id="autoRate">0</span> / sec)</div>
               </div>
             </div>
 
-            <!-- Prestige button: shows once you're ready to reset. -->
-            <div id="prestigeButtonWrap" class="prestige-button-wrap hidden">
+            <!-- Prestige button: always visible, greyed out below 10Qa. -->
+            <div id="prestigeButtonWrap" class="prestige-button-wrap">
               <button id="prestigeButton" class="prestige-button">Prestige</button>
+            </div>
+            <p id="prestigeNextAt" class="prestige-next-note hidden"></p>
+            <p id="prestigeResetNote" class="prestige-reset-note hidden">prestiging will reset points and upgrades</p>
+
+            <div id="automationToggleMain" class="automation-toggle hidden">
+              <label class="automation-toggle-label">Auto-buy upgrades</label>
+              <button id="automationToggleButtonMain" class="secondary" type="button">Off</button>
             </div>
 
             <!-- Minigames: a round of Lights Out banks a few seconds of production. Unlocks with the first upgrade. -->
@@ -76,8 +119,8 @@
                 <span class="minigame-size-label">Grid size</span>
                 <div class="minigame-size-buttons">
                   <button class="size-button active" data-size="3">3×3 <small>+10s</small></button>
-                  <button class="size-button" data-size="5">5×5 <small>+20s</small></button>
-                  <button class="size-button" data-size="7">7×7 <small>+30s</small></button>
+                  <button class="size-button" data-size="5">5×5 <small>+30s</small></button>
+                  <button class="size-button" data-size="7">7×7 <small>+2m</small></button>
                 </div>
               </div>
               <div id="lightsBoard" class="lights-board" data-size="3"></div>
@@ -111,8 +154,42 @@
         </div>
 
         <section id="prestigeSub" class="subtab-panel prestige-panel hidden">
-          <h2>Prestige</h2>
-          <p>omegalul this isnt implemented yet</p>
+          <div class="prestige-header">
+            <h2>Prestige</h2>
+            <div class="prestige-currency-display">
+              <span class="prestige-currency-label">Current</span>
+              <strong id="prestigeCurrencyDisplay">0 ?</strong>
+            </div>
+          </div>
+          <nav class="prestige-subtab-nav" aria-label="Prestige subtabs">
+            <button class="prestige-subtab-button active" data-prestige-subtab="tree" type="button">Tree</button>
+            <button id="choiceSubtabButton" class="prestige-subtab-button hidden" data-prestige-subtab="choice" type="button">THE CHOICE</button>
+          </nav>
+          <div id="prestigeTreeSub" class="prestige-subtab-panel">
+            <div class="prestige-tree-wrap">
+              <div id="prestigeTree" class="prestige-tree" aria-label="Prestige upgrade tree"></div>
+              <div class="prestige-tree-controls" aria-label="Prestige tree controls">
+                <button id="prestigeZoomIn" type="button" aria-label="Zoom in">+</button>
+                <button id="prestigeZoomOut" type="button" aria-label="Zoom out">−</button>
+                <button id="prestigeZoomReset" type="button" aria-label="Reset view">⟲</button>
+              </div>
+            </div>
+            <div id="automationToggle" class="automation-toggle hidden">
+              <label class="automation-toggle-label">Auto-buy upgrades</label>
+              <button id="automationToggleButton" class="secondary" type="button">Off</button>
+            </div>
+          </div>
+          <div id="prestigeChoiceSub" class="prestige-subtab-panel hidden">
+            <div id="prestigeChoiceContent" class="prestige-choice-content"></div>
+          </div>
+        </section>
+
+        <!-- Total chaos subtab: unlocks after the bad ending is seen. -->
+        <section id="chaosSub" class="subtab-panel hidden">
+          <div class="chaos-panel">
+            <h2>total chaos</h2>
+            <p>omegalul WIP will be added later congrats on reaching endgame</p>
+          </div>
         </section>
       </div>
 
@@ -124,20 +201,19 @@
         </section>
       </div>
 
-      <!-- Stats tab showing lifetime earnings and a silly water-boiling fact. -->
+      <!-- Stats tab showing lifetime earnings and formulas. -->
       <div id="statsTab" class="tab-panel hidden">
         <section class="panel stats-panel">
-          <h2>Statistics</h2>
-          <div class="stats-list">
-            <div class="stat-box">
-              <span class="label" id="currentPointsLabel">Current points</span>
-              <strong id="currentPointsStat">0</strong>
-            </div>
-            <div class="stat-box">
-              <span class="label">Total currency made</span>
-              <strong id="totalMadeStat">0</strong>
-            </div>
+          <nav class="stats-subtab-nav" aria-label="Stats subtabs">
+            <button class="stats-subtab-button active" data-stats-subtab="statsOverviewSub" type="button">Overview</button>
+            <button class="stats-subtab-button" data-stats-subtab="statsFormulasSub" type="button">Formulas</button>
+          </nav>
+          <div id="statsOverviewSub" class="stats-subtab-panel active">
+            <div id="statsList" class="stats-list"></div>
             <p id="waterFact" class="fun-fact"></p>
+          </div>
+          <div id="statsFormulasSub" class="stats-subtab-panel hidden">
+            <div id="formulasList" class="formulas-list"></div>
           </div>
         </section>
       </div>
@@ -145,68 +221,112 @@
       <!-- Options tab for save, autosave, notation, music, and cosmetic unlocks. -->
       <div id="optionsTab" class="tab-panel hidden">
         <section class="panel options-panel">
-          <div class="settings">
-            <label for="autosaveSlider">Autosave interval</label>
-            <div class="slider-row">
-              <input id="autosaveSlider" type="range" min="5" max="60" step="5" value="15" />
-              <span id="autosaveValue">15s</span>
+          <nav class="option-subtab-nav" aria-label="Options subtabs">
+            <button class="option-subtab-button active" data-option-subtab="optionsSettingsSub" type="button">Settings</button>
+            <button id="optionsCosmeticsSubtabButton" class="option-subtab-button hidden" data-option-subtab="optionsCosmeticsSub" type="button">Cosmetics</button>
+            <button class="option-subtab-button" data-option-subtab="optionsCreditsSub" type="button">Credits</button>
+          </nav>
+
+          <div id="optionsSettingsSub" class="option-subtab-panel active">
+            <div class="settings">
+              <label for="autosaveSlider">Autosave interval</label>
+              <div class="slider-row">
+                <input id="autosaveSlider" type="range" min="5" max="60" step="5" value="15" />
+                <span id="autosaveValue">15s</span>
+              </div>
+            </div>
+
+            <div class="settings">
+              <label for="tickRateSlider">Tick rate</label>
+              <div class="slider-row">
+                <input id="tickRateSlider" type="range" min="5" max="100" step="5" value="10" />
+                <span id="tickRateValue">10 /s</span>
+              </div>
+            </div>
+
+            <div class="settings notation-setting">
+              <label for="notationSelect">Number notation</label>
+              <select id="notationSelect">
+                <option value="standard">Standard (k, M, B)</option>
+                <option value="scientific">Scientific (1.23e6)</option>
+              </select>
+            </div>
+
+            <div class="settings ticker-setting">
+              <label for="tickerSpeedSlider">Ticker speed</label>
+              <div class="slider-row">
+                <input id="tickerSpeedSlider" type="range" min="10" max="300" step="5" value="60" />
+                <span id="tickerSpeedValue">60 px/s</span>
+              </div>
+            </div>
+
+            <div class="settings ticker-toggle-setting">
+              <label>Ticker visibility</label>
+              <button id="tickerToggleButton" class="secondary" type="button">Hide ticker</button>
+            </div>
+
+            <div class="settings prestige-confirm-setting hidden" id="prestigeConfirmSetting">
+              <label>Prestige confirmation</label>
+              <button id="prestigeConfirmButton" class="secondary" type="button">On</button>
+            </div>
+
+            <div class="option-actions">
+              <button id="saveButton" class="secondary">Save</button>
+              <button id="exportButton" class="secondary">Export</button>
+              <button id="importButton" class="secondary">Import</button>
+              <button id="replayIntroButton" class="secondary">Replay intro</button>
+              <button id="resetButton" class="secondary">Reset</button>
+            </div>
+
+            <div class="music-setting">
+              <label for="musicVolumeSlider">Music volume</label>
+              <div class="slider-row">
+                <input id="musicVolumeSlider" type="range" min="0" max="100" step="1" value="40" />
+                <span id="musicVolumeValue">40%</span>
+              </div>
+              <button id="toggleMusicButton" class="secondary">Play music</button>
             </div>
           </div>
 
-          <div class="settings notation-setting">
-            <label for="notationSelect">Number notation</label>
-            <select id="notationSelect">
-              <option value="standard">Standard (k, M, B)</option>
-              <option value="scientific">Scientific (1.23e6)</option>
-            </select>
-          </div>
+          <div id="optionsCosmeticsSub" class="option-subtab-panel hidden">
+            <div class="cosmetics-settings">
+              <div class="currency-setting">
+                <label for="currencyInput">Rename currency</label>
+                <input id="currencyInput" type="text" value="points" maxlength="30" />
+              </div>
 
-          <div class="settings ticker-setting">
-            <label for="tickerSpeedSlider">Ticker speed</label>
-            <div class="slider-row">
-              <input id="tickerSpeedSlider" type="range" min="10" max="200" step="5" value="60" />
-              <span id="tickerSpeedValue">60 px/s</span>
+              <div class="color-setting">
+                <label for="backgroundColorInput">Background color</label>
+                <input id="backgroundColorInput" type="color" value="#f0f0f0" />
+              </div>
+
+              <div class="prestige-rename-setting">
+                <label for="prestigeCurrencyInput">Rename prestige currency</label>
+                <input id="prestigeCurrencyInput" type="text" value="" maxlength="30" placeholder="?" />
+              </div>
+
+              <div class="color-setting tint-text-setting">
+                <label for="mutedColorInput">Silvery text color</label>
+                <input id="mutedColorInput" type="color" value="#777777" />
+              </div>
+
+              <div class="color-setting tint-ink-setting">
+                <label for="inkColorInput">Dark text color</label>
+                <input id="inkColorInput" type="color" value="#1a1a1a" />
+              </div>
             </div>
           </div>
 
-          <div class="option-actions">
-            <button id="saveButton" class="secondary">Save</button>
-            <button id="exportButton" class="secondary">Export</button>
-            <button id="importButton" class="secondary">Import</button>
-            <button id="replayIntroButton" class="secondary">Replay intro</button>
-            <button id="resetButton" class="secondary">Reset</button>
-          </div>
-
-          <div class="currency-setting">
-            <label for="currencyInput">Rename currency</label>
-            <div id="currencyLocked" class="locked-box">locked (omegalul)</div>
-            <input id="currencyInput" type="text" value="points" maxlength="2000" />
-          </div>
-
-          <div class="color-setting">
-            <label for="backgroundColorInput">Background color</label>
-            <div id="backgroundColorLocked" class="locked-box">locked (omegalul)</div>
-            <input id="backgroundColorInput" type="color" value="#f3efe9" />
-          </div>
-
-          <div class="music-setting">
-            <label for="musicVolumeSlider">Music volume</label>
-            <div class="slider-row">
-              <input id="musicVolumeSlider" type="range" min="0" max="100" step="1" value="40" />
-              <span id="musicVolumeValue">40%</span>
+          <div id="optionsCreditsSub" class="option-subtab-panel hidden">
+            <div class="credits-box">
+              <h3>Credits</h3>
+              <p>Made by me, myself and AI.</p>
+              <p>Some writing may have been from AI (but never the main story (unless otherwise stated) or attempts at comedy in ticker/tooltips)</p>
+              <p>Music: jazz mc workson - CRG (that's me!) (not made by ai ew thats disgusting)</p>
+              <p>i have no idea why i made this slop i just wanted to see why people do this kind of thing</p>
+              <p>Models: <br>The first half: MAI-Code-1.1-Flash <br>The second half: big-pickle<br>The third half: mimo v2.5 free<br>The fourth half: nemotron 3 ultra free</p>
+              <p>Number library: <a href="https://naruyoko.github.io/ExpantaNum.js/index.html" target="_blank">ExpantaNum</a> by Naruyoko</p>
             </div>
-            <button id="toggleMusicButton" class="secondary">Play music</button>
-          </div>
-
-          <div class="credits-box">
-            <h3>Credits</h3>
-            <p>Made by me, myself and AI.</p>
-            <p>Writing by me (unless otherwise stated)</p>
-            <p>Upgrade names came up with by AI (you can tell because they're sooooo good)</p>
-            <p>Music: jazz mc workson - CRG (that's me!) (not made by ai ew thats disgusting)</p>
-            <p>i have no idea why i made this slop i just wanted to see why people do this kind of thing</p>
-            <p>Models: <br>The first half: MAI-Code-1.1-Flash <br>The second half: big-pickle</p>
-            <p>Number library: <a href="https://naruyoko.github.io/ExpantaNum.js/index.html" target="_blank">ExpantaNum</a> by Naruyoko</p>
           </div>
         </section>
       </div>

@@ -5,13 +5,29 @@
 */
 
 :root {
-  --bg: #d8d8d8ad;
-  --ink: #181512;
-  --muted: #5f564e;
-  --line: rgba(24, 21, 18, 0.2);
-  --panel: transparent;
-  --accent: #2a2a2a;
-  --accent-soft: #f0ece5;
+  --bg: #f0f0f0;
+  --ink: #1a1a1a;
+  --muted: #777;
+  --line: rgba(0, 0, 0, 0.12);
+  --panel: #ffffff;
+  --panel-2: #e8e8e8;
+  --accent: #333333;
+  --accent-strong: #1a1a1a;
+  --accent-soft: #e0e0e0;
+  --shadow-sm: 0 1px 2px rgba(28, 26, 24, 0.06);
+  --shadow-md: 0 4px 14px rgba(28, 26, 24, 0.08);
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --font-display: "Sora", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  --font-body: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  --font-mono: "Consolas", "SFMono-Regular", Menlo, monospace;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
 }
 
 * {
@@ -21,10 +37,12 @@
 body {
   margin: 0;
   min-height: 100vh;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-family: var(--font-body);
   background: var(--bg);
   color: var(--ink);
   text-align: left;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
 }
 
 button,
@@ -35,6 +53,12 @@ select {
 
 button {
   cursor: pointer;
+}
+
+/* Consistent focus ring for keyboard navigation. */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 .game-shell {
@@ -51,6 +75,26 @@ button {
   margin-bottom: 28px;
 }
 
+.game-status {
+  min-height: 24px;
+  margin: -6px 0 14px;
+  padding: 6px 10px;
+  border: 1px solid var(--line);
+  background: var(--panel-2);
+  color: var(--ink);
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.game-status.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 /* News ticker pinned to the top of the screen, scrolling one message at a time. */
 .ticker {
   position: fixed;
@@ -65,6 +109,10 @@ button {
   border-bottom: 1px solid rgba(0, 0, 0, 0.15);
   display: flex;
   align-items: center;
+}
+
+.ticker.hidden {
+  display: none;
 }
 
 .ticker-viewport {
@@ -96,16 +144,28 @@ button {
 
 .tab-button {
   min-width: 92px;
-  border: 1px solid var(--ink);
-  background: transparent;
+  border: 1px solid var(--line);
+  background: var(--panel-2);
   color: var(--ink);
   padding: 8px 12px;
   cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease, transform 0.12s ease;
+}
+
+.tab-button:hover {
+  border-color: var(--accent);
+  color: var(--accent-strong);
+}
+
+.tab-button:active {
+  transform: translateY(1px);
 }
 
 .tab-button.active {
-  background: var(--ink);
-  color: var(--bg);
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #ffffff;
 }
 
 .tab-panel.hidden {
@@ -124,6 +184,10 @@ h1, h2, h3, p {
   margin-top: 0;
 }
 
+h1, h2, h3 {
+  font-family: var(--font-display);
+}
+
 h1 {
   font-size: clamp(2.4rem, 5vw, 3.4rem);
   letter-spacing: -0.06em;
@@ -138,7 +202,7 @@ h1 {
 }
 
 .panel {
-  background: var(--panel);
+  background: transparent;
   padding: 0;
   border: none;
   min-width: 0;
@@ -153,18 +217,10 @@ h1 {
   gap: 20px;
 }
 
-.stat-row,
-.stats-grid {
+.stat-row {
   display: grid;
   gap: 12px;
-}
-
-.stat-row {
   grid-template-columns: 1fr;
-}
-
-.stats-grid {
-  grid-template-columns: repeat(2, minmax(130px, 1fr));
 }
 
 .stat-box {
@@ -183,8 +239,10 @@ h1 {
 }
 
 .stat-box strong {
+  font-family: var(--font-display);
   font-size: clamp(1.8rem, 3vw, 2.6rem);
   letter-spacing: -0.05em;
+  font-weight: 700;
 }
 
 .per-second {
@@ -235,15 +293,16 @@ h1 {
 }
 
 .size-button {
-  border: 1px solid var(--ink);
-  background: transparent;
+  border: 1px solid var(--line);
+  background: var(--panel-2);
   color: var(--ink);
   padding: 6px 10px;
   cursor: pointer;
   display: inline-flex;
   align-items: baseline;
   gap: 6px;
-  transition: opacity 0.12s ease, transform 0.12s ease;
+  border-radius: var(--radius-sm);
+  transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease, transform 0.12s ease;
 }
 
 .size-button small {
@@ -252,12 +311,18 @@ h1 {
 }
 
 .size-button:hover {
+  border-color: var(--accent);
   transform: translateY(-1px);
 }
 
+.size-button:active {
+  transform: translateY(0);
+}
+
 .size-button.active {
-  background: var(--ink);
-  color: var(--bg);
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #ffffff;
 }
 
 .size-button.active small {
@@ -270,6 +335,9 @@ h1 {
   gap: 6px;
   width: 100%;
   max-width: 320px;
+  background: rgba(0, 0, 0, 0.06);
+  padding: 8px;
+  border-radius: var(--radius-md);
 }
 
 .lights-board[data-size="3"] {
@@ -287,17 +355,22 @@ h1 {
 .lights-cell {
   width: 100%;
   aspect-ratio: 1;
-  border: 1px solid var(--ink);
-  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-sm);
   background: transparent;
   padding: 0;
   cursor: pointer;
-  transition: background 0.12s ease, box-shadow 0.12s ease;
+  transition: background 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
+}
+
+.lights-cell:hover {
+  border-color: var(--accent);
 }
 
 .lights-cell.on {
-  background: var(--ink);
-  box-shadow: 0 0 0 1px var(--ink), 0 0 14px rgba(0, 0, 0, 0.35);
+  background: #1a1a1a;
+  border-color: rgba(26, 26, 26, 0.6);
+  box-shadow: 0 0 0 1px rgba(26, 26, 26, 0.4), 0 0 14px rgba(26, 26, 26, 0.3);
 }
 
 .minigame-status {
@@ -341,42 +414,735 @@ h1 {
   font-size: 0.85rem;
   padding: 6px 14px;
   cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease;
 }
 
 .subtab-button.active {
-  background: var(--ink);
-  color: var(--bg);
-  border-color: var(--ink);
+  background: var(--accent);
+  color: #ffffff;
+  border-color: var(--accent);
+}
+
+.subtab-button.active[data-subtab="prestigeSub"] {
+  background: #0a1628;
+  color: #bfd9ff;
+  border-color: #1e3a5f;
 }
 
 .subtab-button:hover:not(.active) {
   border-color: var(--line);
   color: var(--ink);
+  background: var(--panel-2);
 }
 
 .subtab-panel.hidden {
   display: none;
 }
 
-/* Prestige panel: dark blue scheme. */
-.prestige-panel {
-  background: #0a1628;
-  color: #bfd9ff;
-  border: 1px solid #1e3a5f;
-  padding: 26px 20px 24px;
-  min-width: 0;
+/* Total chaos subtab (unlocks after the bad ending is seen). */
+.chaos-panel {
+  padding: 24px 20px;
+  text-align: center;
 }
 
-.prestige-panel h2 {
+.chaos-panel h2 {
   margin: 0 0 10px;
-  color: #7fb2ff;
+  font-size: 1.4rem;
   letter-spacing: -0.03em;
 }
 
-.prestige-panel p {
+.chaos-panel p {
   margin: 0;
-  color: #9fc3ff;
-  opacity: 0.85;
+  color: var(--muted);
+}
+
+/* Prestige panel: blue scheme. */
+.prestige-panel {
+  background: #0f1e34;
+  color: #d0e4ff;
+  border: none;
+  padding: 24px 20px 20px;
+  min-width: 0;
+  border-radius: 8px;
+  box-shadow: 0 0 0 1px #2a4d7a, 0 2px 12px rgba(0, 0, 0, 0.3);
+}
+
+.prestige-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.prestige-panel h2 {
+  margin: 0;
+  color: #99c4ff;
+  letter-spacing: -0.03em;
+  font-size: 1.4rem;
+}
+
+.prestige-currency-display {
+  margin-top: 4px;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 6px;
+}
+
+.prestige-currency-label {
+  color: #8fb5e0;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.prestige-currency-display strong {
+  font-size: 1.15rem;
+  letter-spacing: -0.02em;
+}
+
+/* The prestige tree is a pannable, zoomable viewport. */
+.prestige-tree {
+  position: relative;
+  overflow: hidden;
+  height: 600px;
+  min-height: 0;
+  border-radius: 6px;
+  background: #0c1a2e;
+  box-shadow: inset 0 1px 0 rgba(127, 178, 255, 0.1), inset 0 0 0 1px rgba(127, 178, 255, 0.12);
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Square background centered on the Limit Breaker node, split by its
+   diagonals into 4 triangles, one per path. Lives inside the stage so it
+   pans/zooms with the tree; its left/top are set from JS to stay centered on
+   the Limit Breaker node. Colors are rotated 90deg CCW so they match the
+   actual path directions: top = prestige (up), right = points/yield (right),
+   bottom = synergy (down), left = QoL (left). The conic gradient starts at
+   45deg so its boundaries land on the diagonals. */
+.prestige-tree-bg {
+  position: absolute;
+  width: 4400px;
+  height: 4400px;
+  pointer-events: none;
+  z-index: 0;
+  background: conic-gradient(from 45deg,
+    rgba(255, 178, 127, 0.10) 0deg 90deg,
+    rgba(127, 255, 178, 0.10) 90deg 180deg,
+    rgba(255, 127, 178, 0.10) 180deg 270deg,
+    rgba(127, 178, 255, 0.10) 270deg 360deg);
+}
+
+.prestige-tree.grabbing {
+  cursor: grabbing;
+}
+
+/* Pan wrapper: translates the whole tree. Translate never blurs text. */
+.prestige-tree-pan {
+  position: absolute;
+  inset: 0;
+  transform-origin: 0 0;
+  will-change: transform;
+}
+
+/* The 5x5 grid of nodes. Zoom is done by scaling node layout sizes via
+   --tree-scale (set from JS), so the browser re-renders text at the target
+   size and it stays crisp, instead of stretching a scaled bitmap. */
+.prestige-tree-stage {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(10, auto);
+  grid-template-rows: repeat(22, auto);
+  place-items: center;
+  place-content: center;
+  --tree-scale: 1;
+  gap: calc(52px * var(--tree-scale));
+  padding: 24px;
+}
+
+.prestige-tree-wrap {
+  position: relative;
+  margin-top: 2px;
+}
+
+.prestige-path-label {
+  position: absolute;
+  color: rgba(127, 178, 255, 0.35);
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  pointer-events: none;
+  white-space: nowrap;
+  transform: translate(-50%, -50%);
+}
+
+.prestige-rename-setting {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 8px;
+  border-top: 1px solid var(--line);
+}
+
+.prestige-rename-setting label {
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.72rem;
+}
+
+.prestige-rename-setting input {
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--ink);
+  padding: 10px 12px;
+  width: min(240px, 100%);
+  border-radius: var(--radius-sm);
+}
+
+.prestige-rename-setting input::placeholder {
+  color: var(--muted);
+  opacity: 0.7;
+}
+
+.prestige-rename-setting input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-soft);
+}
+
+.prestige-rename-setting .locked-box {
+  color: var(--muted);
+  font-style: normal;
+}
+
+/* Zoom controls floating in the corner of the tree viewport. */
+.prestige-tree-controls {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  z-index: 5;
+  display: flex;
+  gap: 2px;
+  background: rgba(15, 30, 52, 0.9);
+  border-radius: 6px;
+  padding: 2px;
+  border: 1px solid rgba(127, 178, 255, 0.18);
+  backdrop-filter: blur(4px);
+}
+
+.prestige-tree-controls button {
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  border: none;
+  background: transparent;
+  color: #8fb5e0;
+  font: inherit;
+  font-size: 0.9rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.prestige-tree-controls button:hover {
+  background: rgba(127, 178, 255, 0.12);
+  color: #bfd9ff;
+}
+
+.prestige-node-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+
+/* When a node is hovered, lift its whole wrap above every other node so the
+   tooltip (which lives inside the wrap's stacking context) never gets covered
+   by neighbouring nodes. */
+.prestige-node-wrap:hover {
+  z-index: 30;
+}
+
+.prestige-node {
+  position: relative;
+  width: calc(64px * var(--tree-scale));
+  height: calc(64px * var(--tree-scale));
+  border-radius: 14px;
+  border: 1px solid rgba(127, 178, 255, 0.2);
+  background: linear-gradient(180deg, #1a3a5e 0%, #122a48 100%);
+  color: #d0e4ff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  transition: transform 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease;
+}
+
+.prestige-node:hover {
+  transform: translateY(-2px);
+  border-color: rgba(127, 178, 255, 0.45);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25), 0 0 12px rgba(127, 178, 255, 0.15);
+  z-index: 20;
+}
+
+.prestige-node.disabled {
+  filter: brightness(0.6);
+  cursor: not-allowed;
+}
+
+.prestige-node.locked {
+  opacity: 0.35;
+}
+
+.prestige-node.owned {
+  border-color: rgba(145, 213, 163, 0.5);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25), 0 0 10px rgba(145, 213, 163, 0.15);
+}
+
+.prestige-node-icon {
+  font-size: calc(1.5rem * var(--tree-scale));
+  line-height: 1;
+}
+
+.prestige-node-level {
+  font-size: calc(0.55rem * var(--tree-scale));
+  color: rgba(180, 210, 255, 0.8);
+  letter-spacing: 0.03em;
+  line-height: 1;
+  margin-top: 1px;
+}
+
+/* Hide the level badges when the tree is zoomed out below 60%. */
+.prestige-tree-stage.zoomed-out .prestige-node-level {
+  display: none;
+}
+
+/* Prestige sub-subtab navigation (Tree / THE CHOICE). */
+.prestige-subtab-nav {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.prestige-subtab-button {
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: 1px solid rgba(127, 178, 255, 0.2);
+  background: rgba(15, 30, 52, 0.6);
+  color: #8fb5e0;
+  font: inherit;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.prestige-subtab-button:hover {
+  background: rgba(127, 178, 255, 0.12);
+  color: #bfd9ff;
+}
+
+.prestige-subtab-button.active {
+  background: rgba(127, 178, 255, 0.18);
+  color: #d0e4ff;
+  border-color: rgba(127, 178, 255, 0.45);
+}
+
+.prestige-subtab-panel.hidden {
+  display: none;
+}
+
+/* THE CHOICE panel. */
+.prestige-choice-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 8px 0;
+}
+
+.choice-intro {
+  color: #8fb5e0;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  text-align: center;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.choice-upgrades {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.choice-upgrade {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 20px 16px;
+  border-radius: 10px;
+  border: 1px solid rgba(127, 178, 255, 0.2);
+  background: linear-gradient(180deg, #1a3a5e 0%, #122a48 100%);
+  text-align: center;
+}
+
+/* Hover tooltip on the ending choice cards, styled like the tree node tooltips. */
+.choice-upgrade-tooltip {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 12px);
+  transform: translateX(-50%);
+  width: min(240px, 68vw);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 12px;
+  border: 1px solid #4a7db5;
+  border-radius: 8px;
+  background: #0a1420;
+  color: #eaf2ff;
+  font-size: 0.76rem;
+  line-height: 1.45;
+  pointer-events: none;
+  z-index: 10;
+  opacity: 0;
+  visibility: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  transition: opacity 0.12s ease, visibility 0.12s ease;
+}
+
+.choice-upgrade:hover .choice-upgrade-tooltip,
+.choice-upgrade:focus-within .choice-upgrade-tooltip {
+  opacity: 1;
+  visibility: visible;
+}
+
+.choice-upgrade-tooltip strong {
+  font-size: 0.78rem;
+  color: #bfd9ff;
+}
+
+.choice-upgrade-tooltip em {
+  color: #cfe1ff;
+  font-style: italic;
+}
+
+.choice-upgrade-tooltip span {
+  color: #dfeaff;
+}
+
+.choice-upgrade.good {
+  border-color: rgba(145, 213, 163, 0.45);
+}
+
+.choice-upgrade.bad {
+  border-color: rgba(255, 127, 127, 0.45);
+}
+
+.choice-upgrade-icon {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.choice-upgrade h3 {
+  margin: 0;
+  color: #d0e4ff;
+  font-size: 1.05rem;
+}
+
+.choice-upgrade p {
+  margin: 0;
+  color: #8fb5e0;
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
+.choice-upgrade .choice-cost {
+  color: #99c4ff;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+}
+
+.choice-upgrade button {
+  margin-top: 4px;
+  padding: 8px 18px;
+  border-radius: 6px;
+  border: 1px solid rgba(127, 178, 255, 0.4);
+  background: rgba(127, 178, 255, 0.15);
+  color: #d0e4ff;
+  font: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.choice-upgrade button:hover {
+  background: rgba(127, 178, 255, 0.25);
+}
+
+.choice-upgrade button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* The un-chosen ending card is dimmed, but its tooltip stays fully opaque. */
+.choice-upgrade.locked .choice-upgrade-icon,
+.choice-upgrade.locked h3,
+.choice-upgrade.locked p,
+.choice-upgrade.locked button {
+  opacity: 0.5;
+}
+
+/* Ending fade-to-black. */
+.ending-fade {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+  z-index: 30;
+  pointer-events: none;
+}
+
+.ending-fade.visible {
+  opacity: 1;
+}
+
+.ending-fade.clickable {
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.ending-fade.hidden {
+  display: none;
+}
+
+.ending-fade-text {
+  color: #fff;
+  font-size: clamp(1.4rem, 4vw, 2.2rem);
+  letter-spacing: 0.04em;
+  text-align: center;
+  padding: 24px;
+  max-width: 640px;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 1.2s ease, transform 1.2s ease;
+}
+
+.ending-fade-text.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.ending-fade-hint {
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-top: 30px;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+}
+
+.ending-fade-hint.visible {
+  opacity: 1;
+  animation: endingHintPulse 2.2s ease-in-out 1.2s infinite;
+}
+
+@keyframes endingHintPulse {
+  0%, 100% { opacity: 0.45; }
+  50% { opacity: 1; }
+}
+
+/* Ending screens (win / bad). */
+.ending-screen {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+  z-index: 40;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+
+.ending-screen.visible {
+  opacity: 1;
+}
+
+.ending-screen.visible .ending-screen-card {
+  animation: endingScreenCardIn 0.8s ease;
+}
+
+@keyframes endingScreenCardIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.ending-screen.hidden {
+  display: none;
+}
+
+.ending-screen-card {
+  width: min(520px, calc(100vw - 24px));
+  background: #0f1e34;
+  border: 1px solid rgba(127, 178, 255, 0.3);
+  padding: 32px 24px 22px;
+  color: #d0e4ff;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 0 40px rgba(127, 178, 255, 0.15);
+}
+
+.ending-screen-label {
+  margin: 0 0 8px;
+  color: #8fb5e0;
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.ending-screen-card h2 {
+  margin: 0 0 14px;
+  font-size: clamp(2rem, 6vw, 3rem);
+  letter-spacing: -0.05em;
+}
+
+.ending-screen-text {
+  margin: 0 0 22px;
+  color: #8fb5e0;
+  line-height: 1.7;
+}
+
+.ending-screen-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+/* The good ending win screen has no card box — just text on pure black. */
+.ending-screen.plain .ending-screen-card {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+}
+
+.ending-screen.plain .ending-screen-label {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.ending-screen.plain .ending-screen-card h2 {
+  color: #fff;
+}
+
+.ending-screen.plain .ending-screen-text {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.automation-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+  padding: 8px 14px;
+  background: rgba(15, 30, 52, 1);
+  border-radius: 8px;
+  border: 1px solid rgba(127, 178, 255, 0.35);
+}
+
+.automation-toggle.hidden {
+  display: none;
+}
+
+.automation-toggle-label {
+  color: #8fb5e0;
+  font-size: 0.82rem;
+  white-space: nowrap;
+}
+
+.automation-toggle .secondary {
+  min-width: 50px;
+  padding: 4px 12px;
+  border: 1px solid rgba(127, 178, 255, 0.5);
+  background: rgba(127, 178, 255, 0.35);
+  color: #8fb5e0;
+  font-size: 0.78rem;
+}
+
+.secondary.active-toggle {
+  background: #2d8a4e;
+  border-color: #2d8a4e;
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.prestige-node-hover {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 12px);
+  transform: translateX(-50%);
+  width: min(240px, 68vw);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 12px;
+  border: 1px solid #4a7db5;
+  border-radius: 8px;
+  background: #0a1420;
+  color: #eaf2ff;
+  font-size: 0.76rem;
+  line-height: 1.45;
+  pointer-events: none;
+  z-index: 10;
+  opacity: 0;
+  visibility: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  transition: opacity 0.12s ease, visibility 0.12s ease;
+}
+
+.prestige-node:hover .prestige-node-hover,
+.prestige-node:focus-visible .prestige-node-hover {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Top-row nodes flip their tooltip below so it doesn't clip the viewport. */
+.prestige-node.tooltip-below .prestige-node-hover {
+  top: calc(100% + 12px);
+  bottom: auto;
+}
+
+.prestige-node-hover strong {
+  font-size: 0.78rem;
+  color: #bfd9ff;
+}
+
+.prestige-node-hover em {
+  color: #cfe1ff;
+  font-style: italic;
+}
+
+.prestige-node-hover span {
+  color: #dfeaff;
 }
 
 /* Prestige button between the point counter and the minigames. */
@@ -391,9 +1157,9 @@ h1 {
   font-size: 0.95rem;
   font-weight: 700;
   letter-spacing: 0.04em;
-  color: #bfd9ff;
-  background: #0a1628;
-  border: 1px solid #1e3a5f;
+  color: #d0e4ff;
+  background: #0f1e34;
+  border: 1px solid #2a4d7a;
   border-radius: 8px;
   cursor: pointer;
 }
@@ -402,6 +1168,31 @@ h1 {
   background: #10213c;
   border-color: #2a4d7a;
   box-shadow: 0 0 0 1px rgba(127, 178, 255, 0.4);
+}
+
+.prestige-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  background: #0a1628;
+  border-color: #1e3a5f;
+  box-shadow: none;
+}
+
+/* "Next at" threshold line under the Prestige button. */
+.prestige-next-note {
+  margin-top: 6px;
+  font-size: 0.75rem;
+  text-align: center;
+  color: #0f1e34;
+}
+
+/* Reset warning under the Prestige button, in prestige dark blue. */
+.prestige-reset-note {
+  width: fit-content;
+  margin: 6px auto 0;
+  font-size: 0.75rem;
+  text-align: center;
+  color: #0f1e34;
 }
 
 /* Lights Out help dialog. */
@@ -417,10 +1208,12 @@ h1 {
 
 .dialog {
   width: min(420px, calc(100vw - 24px));
-  background: var(--bg);
+  background: var(--panel);
   border: 1px solid var(--line);
   padding: 22px 20px 18px;
   color: var(--ink);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
 }
 
 .dialog-label {
@@ -469,10 +1262,11 @@ h1 {
 
 .notation-setting select {
   width: min(300px, 100%);
-  border: 1px solid var(--ink);
-  background: transparent;
+  border: 1px solid var(--line);
+  background: var(--panel);
   color: var(--ink);
   padding: 10px 12px;
+  border-radius: var(--radius-sm);
 }
 
 .slider-row {
@@ -522,28 +1316,130 @@ input[type="range"] {
   gap: 20px;
 }
 
+/* Stats subtab navigation (Overview / Formulas). */
+.stats-subtab-nav {
+  display: flex;
+  gap: 6px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 8px;
+}
+
+.stats-subtab-button {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.85rem;
+  padding: 6px 14px;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+}
+
+.stats-subtab-button.active {
+  background: var(--accent);
+  color: #ffffff;
+  border-color: var(--accent);
+}
+
+.stats-subtab-button:hover:not(.active) {
+  border-color: var(--line);
+  color: var(--ink);
+  background: var(--panel-2);
+}
+
+.stats-subtab-panel.hidden {
+  display: none;
+}
+
+/* Formula cards in the Formulas subtab. */
+.formulas-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.formula-card {
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--panel-2);
+}
+
+.formula-card h3 {
+  margin: 0 0 8px 0;
+  font-size: 0.95rem;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.formula-expr {
+  display: block;
+  padding: 8px 12px;
+  margin-bottom: 8px;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  letter-spacing: 0.02em;
+  color: var(--accent);
+  white-space: pre-wrap;
+}
+
+.formula-card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.6;
+}
+
 .stats-list {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 28px;
+}
+
+/* Section headers group related stats together. */
+.stats-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.stats-section-head {
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 4px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px 24px;
 }
 
 .stats-list .stat-box {
   border-bottom: 1px solid var(--line);
+  padding-bottom: 10px;
 }
 
 .stats-list .stat-box strong {
-  font-size: clamp(1.4rem, 2.6vw, 2rem);
+  font-size: clamp(1.2rem, 2.4vw, 1.8rem);
   letter-spacing: -0.04em;
 }
 
 .fun-fact {
   margin: 0;
   padding: 16px;
-  border: 1px dashed var(--line);
-  background: rgba(0, 0, 0, 0.02);
+  border: 1px solid var(--line);
+  background: var(--panel-2);
   color: var(--muted);
   line-height: 1.7;
+  border-radius: var(--radius-sm);
 }
 
 /* Upgrade columns and vertical scrolling sections for the shop. */
@@ -663,20 +1559,30 @@ input[type="range"] {
 .buy-max-button,
 .secondary,
 .start-button {
-  border: 1px solid var(--ink);
-  background: transparent;
+  border: 1px solid var(--line);
+  background: var(--panel-2);
   color: var(--ink);
   padding: 8px 12px;
   white-space: nowrap;
   flex-shrink: 0;
-  transition: opacity 0.12s ease, transform 0.12s ease;
+  border-radius: var(--radius-sm);
+  transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease, transform 0.12s ease, box-shadow 0.12s ease;
 }
 
 .buy-button:hover,
 .buy-max-button:hover,
 .secondary:hover,
 .start-button:hover {
+  border-color: var(--accent);
+  color: var(--accent-strong);
   transform: translateY(-1px);
+}
+
+.buy-button:active,
+.buy-max-button:active,
+.secondary:active,
+.start-button:active {
+  transform: translateY(0);
 }
 
 .buy-button:disabled,
@@ -689,6 +1595,107 @@ input[type="range"] {
 .buy-max-button {
   font-size: 0.75rem;
   letter-spacing: 0.02em;
+}
+
+/* Flash animation when an upgrade is purchased. */
+@keyframes purchaseFlash {
+  0% { background-color: rgba(145, 213, 163, 0.3); }
+  100% { background-color: transparent; }
+}
+
+.upgrade-item.purchase-flash {
+  animation: purchaseFlash 0.4s ease-out;
+}
+
+/* Upgrades with the scaling penalty active. */
+.upgrade-item.scaled {
+  opacity: 0.75;
+}
+
+.upgrade-item.scaled .upgrade-copy h3::before {
+  content: "Scaled ";
+  color: #c44;
+  font-weight: 700;
+}
+
+/* Prestige-themed upgrade items (e.g. Super Overclock). */
+.upgrade-item.prestige-upgrade {
+  background: #0f1e34;
+  color: #d0e4ff;
+  border-left: 3px solid #4a7ab5;
+  padding: 14px 16px 14px 13px;
+  border-radius: 0 6px 6px 0;
+  margin-left: -1px;
+}
+
+.upgrade-item.prestige-upgrade .upgrade-copy h3 {
+  color: #99c4ff;
+}
+
+.upgrade-item.prestige-upgrade .upgrade-copy p {
+  color: #b0c8e8;
+}
+
+.upgrade-item.prestige-upgrade .upgrade-current-effect {
+  color: #d0e4ff;
+}
+
+.upgrade-item.prestige-upgrade .buy-button {
+  border-color: #4a7ab5;
+  background: rgba(74, 122, 181, 0.15);
+  color: #99c4ff;
+}
+
+.upgrade-item.prestige-upgrade .buy-button:disabled {
+  border-color: #2a4d7a;
+  color: #5a8abf;
+}
+
+.upgrade-item.prestige-upgrade .buy-max-button {
+  border-color: #4a7ab5;
+  background: rgba(74, 122, 181, 0.15);
+  color: #99c4ff;
+}
+
+.upgrade-item.prestige-upgrade .buy-max-button:disabled {
+  border-color: #2a4d7a;
+  color: #5a8abf;
+}
+
+.option-subtab-nav {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 8px;
+}
+
+.option-subtab-button {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.85rem;
+  padding: 6px 14px;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+}
+
+.option-subtab-button.active {
+  background: var(--accent);
+  color: #ffffff;
+  border-color: var(--accent);
+}
+
+.option-subtab-button:hover:not(.active) {
+  border-color: var(--line);
+  color: var(--ink);
+  background: var(--panel-2);
+}
+
+.option-subtab-panel.hidden {
+  display: none;
 }
 
 .option-actions {
@@ -722,11 +1729,12 @@ input[type="range"] {
 }
 
 .currency-setting input {
-  border: 1px solid var(--ink);
-  background: transparent;
+  border: 1px solid var(--line);
+  background: var(--panel);
   color: var(--ink);
   padding: 10px 12px;
   width: min(240px, 100%);
+  border-radius: var(--radius-sm);
 }
 
 .currency-setting input::placeholder {
@@ -741,11 +1749,12 @@ input[type="range"] {
   width: min(240px, 100%);
   min-height: 44px;
   border: 1px dashed var(--line);
-  background: rgba(0, 0, 0, 0.02);
+  background: var(--panel-2);
   color: var(--muted);
   font-size: 0.8rem;
   letter-spacing: 0.04em;
   text-transform: lowercase;
+  border-radius: var(--radius-sm);
 }
 
 .hidden {
@@ -753,12 +1762,13 @@ input[type="range"] {
 }
 
 .color-setting input[type="color"] {
-  border: 1px solid var(--ink);
+  border: 1px solid var(--line);
   background: transparent;
   width: 72px;
   height: 42px;
   padding: 4px;
   cursor: pointer;
+  border-radius: var(--radius-sm);
 }
 
 .credits-box {
@@ -785,6 +1795,12 @@ input[type="range"] {
   justify-content: center;
   background: rgba(17, 14, 12, 0.55);
   z-index: 10;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.cutscene.visible {
+  opacity: 1;
 }
 
 .cutscene.hidden {
@@ -793,10 +1809,24 @@ input[type="range"] {
 
 .cutscene-card {
   width: min(560px, calc(100vw - 24px));
-  background: var(--bg);
+  background: var(--panel);
   border: 1px solid var(--line);
   padding: 26px 20px 18px;
   color: var(--ink);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  animation: cutsceneCardIn 0.5s ease;
+}
+
+@keyframes cutsceneCardIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .cutscene-label {
@@ -840,14 +1870,38 @@ input[type="range"] {
   flex: 1;
 }
 
+/* Ending cutscenes (THE GOOD/BAD ENDING) render on a pure black backdrop
+   with white text, including when replayed from the choice panel. The fade
+   overlay sits behind it (z-index 30) so the screen stays black the whole
+   time; the cutscene fades in on top of it. */
+.cutscene.ending {
+  background: #000;
+  z-index: 35;
+}
+
+.cutscene.ending .cutscene-card {
+  background: #000;
+  border-color: rgba(255, 255, 255, 0.25);
+  color: #fff;
+  box-shadow: none;
+}
+
+.cutscene.ending .cutscene-label {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.cutscene.ending .cutscene-card h2 {
+  color: #fff;
+}
+
+.cutscene.ending .dialogue {
+  color: rgba(255, 255, 255, 0.85);
+}
+
 @media (max-width: 700px) {
   .topbar {
     flex-direction: column;
     align-items: flex-start;
-  }
-
-  .toolbar {
-    justify-content: flex-start;
   }
 
   .layout {
